@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class YahooFinanceApiClient
@@ -33,7 +34,7 @@ class YahooFinanceApiClient
      * @param  mixed $region The region of the stock
      * @return void
      */
-    public function fetchStockProfile(string $symbol, string $region): array
+    public function fetchStockProfile(string $symbol, string $region): JsonResponse
     {
         /*
         $stockProfile = [
@@ -75,9 +76,36 @@ class YahooFinanceApiClient
         $responseStatusCode = 200;
         $responseContent = file_get_contents("public/response.txt");
 
+        // handle non 200 response
+        if ($responseStatusCode !== 200) {
+
+            return new JsonResponse('Finance API Client Error ', 400);
+        }
+
+        // get stock profile from price object in content
+        $stockProfile = json_decode($responseContent)->price;
+
+        $price = $stockProfile->regularMarketPrice->raw;
+        $previousClose = $stockProfile->regularMarketPreviousClose->raw;
+        $priceChange = $price - $previousClose;
+
+
+        $stockProfileAsArray = [
+            'symbol' => $stockProfile->symbol,
+            'shortName' => $stockProfile->shortName,
+            'region' => $region,
+            'exchangeName' => $stockProfile->exchangeName,
+            'currency' => $stockProfile->currency,
+            'price' => $price,
+            'previousClose' => $previousClose,
+            'priceChange' => $priceChange,
+        ];
+
+        /*
         return [
             'status' => $responseStatusCode,
-            'content' => $responseContent
-        ];
+            'content' => $stockProfileAsArray
+        ];*/
+        return new JsonResponse($stockProfileAsArray, $responseStatusCode);
     }
 }
