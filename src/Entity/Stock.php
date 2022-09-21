@@ -24,13 +24,13 @@ class Stock
     private ?string $exchangeName = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $price = null;
+    private ?float $price = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $priceChange = null;
+    private ?float $priceChange = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $previousClose = null;
+    private ?float $previousClose = null;
 
     #[ORM\Column(length: 3)]
     private ?string $region = null;
@@ -79,36 +79,36 @@ class Stock
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(float $price): self
     {
         $this->price = $price;
 
         return $this;
     }
 
-    public function getPriceChange(): ?string
+    public function getPriceChange(): ?float
     {
         return $this->priceChange;
     }
 
-    public function setPriceChange(string $priceChange): self
+    public function setPriceChange(float $priceChange): self
     {
         $this->priceChange = $priceChange;
 
         return $this;
     }
 
-    public function getPreviousClose(): ?string
+    public function getPreviousClose(): ?float
     {
         return $this->previousClose;
     }
 
-    public function setPreviousClose(string $previousClose): self
+    public function setPreviousClose(float $previousClose): self
     {
         $this->previousClose = $previousClose;
 
