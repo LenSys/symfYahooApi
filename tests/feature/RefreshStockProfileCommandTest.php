@@ -1,11 +1,14 @@
 <?php
 
 use App\Entity\Stock;
+use App\Http\YahooFinanceApiClient;
 use App\Tests\DatabaseDependantTestCase;
 use Symfony\Component\Console\Application;
 use App\Command\RefreshStockProfileCommand;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Console\Tester\CommandTester;
-use App\Http\YahooFinanceApiClient;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 
 class RefreshStockProfileCommandTest extends DatabaseDependantTestCase
@@ -14,9 +17,16 @@ class RefreshStockProfileCommandTest extends DatabaseDependantTestCase
     {
         // setup application for testing
         $application = new Application();
-        // $yahooFinanceApiClient = new YahooFinanceApiClient();
+
         $yahooFinanceApiClient = self::$kernel->getContainer()->get('yahoo-finance-api-client');
-        $application->add(new RefreshStockProfileCommand($this->entityManager, $yahooFinanceApiClient));
+        
+        // set serializer
+        $encoders = [new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+        $application->add(new RefreshStockProfileCommand($this->entityManager, 
+                                                        $yahooFinanceApiClient,
+                                                        $serializer));
 
         // command
         $command = $application->find('app:refresh-stock-profile');
